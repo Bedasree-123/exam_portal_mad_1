@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block title %}Examiner Dashboard{% endblock %}
+{% block content %}
+<h1>Examiner Dashboard</h1>
+
+<div class="stats">
+    <div class="stat"><span>Assigned exams</span><strong>{{ exams|length }}</strong></div>
+    <div class="stat"><span>Students booked</span><strong>{{ booked_total }}</strong></div>
+    <div class="stat"><span>Pending evaluations</span><strong>{{ pending_evaluations }}</strong></div>
+</div>
+
+<div class="card-box">
+    <h2>Assigned examinations</h2>
+    {% if exams %}
+    <table class="table">
+        <thead>
+            <tr><th>Examination</th><th>Course</th><th>Slot creation period</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% for exam in exams %}
+            <tr>
+                <td>{{ exam.name }} <div class="sub">{{ exam.exam_type }}</div></td>
+                <td>{{ exam.course_code }}</td>
+                <td>{{ exam.slot_creation_start }} to {{ exam.slot_creation_end }}</td>
+                <td><span class="badge bg-secondary">{{ exam.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No examinations have been assigned to you yet.</p>
+    {% endif %}
+</div>
+
+<div class="card-box">
+    <div class="box-header">
+        <h2>Upcoming slots</h2>
+        <a href="{{ url_for('examiner_slots') }}">Manage slots</a>
+    </div>
+    {% if slots %}
+    <table class="table">
+        <thead>
+            <tr><th>Examination</th><th>Date</th><th>Time</th><th>Booked</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for slot in slots %}
+            <tr>
+                <td>{{ slot.exam_name }}</td>
+                <td>{{ slot.exam_date }}</td>
+                <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+                <td>{{ slot.booked }} / {{ slot.capacity }}</td>
+                <td><span class="badge status-{{ slot.status|lower }}">{{ slot.status }}</span></td>
+                <td><a href="{{ url_for('examiner_slot_detail', slot_id=slot.id) }}">Students</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">You have not created any slots yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

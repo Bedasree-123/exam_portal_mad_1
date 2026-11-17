@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Slot Students{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <h1>{{ slot.exam_name }}</h1>
+        <p class="sub">{{ slot.exam_date }}, {{ slot.start_time }} - {{ slot.end_time }}</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('examiner_slots') }}">Back</a>
+</div>
+
+<div class="card-box">
+    <h2>Booked students ({{ students|length }})</h2>
+    {% if students %}
+    <table class="table">
+        <thead>
+            <tr><th>Student</th><th>Booking</th><th>Marks</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.name }} <div class="sub">{{ student.email }}</div></td>
+                <td><span class="badge status-{{ student.booking_status|lower }}">{{ student.booking_status }}</span></td>
+                <td>
+                    {% if student.marks is not none %}
+                        {{ student.marks }} ({{ 'published' if student.published else 'draft' }})
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
+                <td>
+                    {% if student.booking_status == 'Booked' %}
+                    <a class="btn btn-sm btn-primary" href="{{ url_for('evaluate_student', booking_id=student.booking_id) }}">
+                        {{ 'Edit' if student.marks is not none else 'Evaluate' }}
+                    </a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No students have booked this slot.</p>
+    {% endif %}
+</div>
+{% endblock %}

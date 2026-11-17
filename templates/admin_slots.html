@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Slots{% endblock %}
+{% block content %}
+<h1>All slots</h1>
+
+<div class="card-box">
+    {% if slots %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr><th>Examination</th><th>Date</th><th>Time</th><th>Booked</th><th>Status</th><th>Examiner</th></tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                <tr>
+                    <td>{{ slot.exam_name }} <div class="sub">{{ slot.course_code }}</div></td>
+                    <td>{{ slot.exam_date }}</td>
+                    <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+                    <td>{{ slot.booked }} / {{ slot.capacity }}</td>
+                    <td><span class="badge status-{{ slot.status|lower }}">{{ slot.status }}</span></td>
+                    <td>
+                        <form method="post" class="inline-form">
+                            <input type="hidden" name="slot_id" value="{{ slot.id }}">
+                            <select class="form-select form-select-sm" name="examiner_id" aria-label="Examiner">
+                                {% for examiner in examiners %}
+                                <option value="{{ examiner.id }}" {% if examiner.id == slot.examiner_id %}selected{% endif %}>{{ examiner.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">Change</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty">No slots have been created.</p>
+    {% endif %}
+</div>
+{% endblock %}

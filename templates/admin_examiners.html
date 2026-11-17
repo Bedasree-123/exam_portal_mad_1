@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Examiners{% endblock %}
+{% block content %}
+<h1>Examiners</h1>
+
+<div class="card-box">
+    {% if examiners %}
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Department</th><th>Contact</th><th>Status</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for examiner in examiners %}
+            <tr>
+                <td>{{ examiner.id }}</td>
+                <td>{{ examiner.name }}</td>
+                <td>{{ examiner.department or '-' }}</td>
+                <td>
+                    {{ examiner.email }}
+                    {% if examiner.phone %}<div class="sub">{{ examiner.phone }}</div>{% endif %}
+                </td>
+                <td><span class="badge status-{{ examiner.status }}">{{ examiner.status|title }}</span></td>
+                <td>
+                    <form method="post" class="actions">
+                        <input type="hidden" name="examiner_id" value="{{ examiner.id }}">
+                        {% if examiner.status == 'pending' %}
+                            <button name="status" value="active" class="btn btn-sm btn-success">Approve</button>
+                            <button name="status" value="inactive" class="btn btn-sm btn-outline-danger">Reject</button>
+                        {% elif examiner.status == 'active' %}
+                            <button name="status" value="inactive" class="btn btn-sm btn-outline-secondary">Deactivate</button>
+                        {% else %}
+                            <button name="status" value="active" class="btn btn-sm btn-outline-primary">Activate</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No examiners have registered yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

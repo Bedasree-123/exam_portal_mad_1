@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} - Exam Desk</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <header class="topbar">
+        {% if current_user %}
+        <a class="brand" href="{{ url_for('dashboard') }}">Exam Desk</a>
+        <nav class="main-nav">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            {% if current_user.role == 'admin' %}
+                <a href="{{ url_for('admin_courses') }}">Courses</a>
+                <a href="{{ url_for('admin_exams') }}">Examinations</a>
+                <a href="{{ url_for('admin_students') }}">Students</a>
+                <a href="{{ url_for('admin_examiners') }}">Examiners</a>
+                <a href="{{ url_for('admin_slots') }}">Slots</a>
+                <a href="{{ url_for('admin_bookings') }}">Bookings</a>
+                <a href="{{ url_for('admin_search') }}">Search</a>
+            {% elif current_user.role == 'examiner' %}
+                <a href="{{ url_for('examiner_slots') }}">My slots</a>
+            {% else %}
+                <a href="{{ url_for('student_exams') }}">Exams</a>
+                <a href="{{ url_for('student_history') }}">History</a>
+                <a href="{{ url_for('student_profile') }}">Profile</a>
+            {% endif %}
+        </nav>
+        <div class="account">
+            <span class="account-name">{{ current_user.name }} ({{ current_user.role }})</span>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+        {% else %}
+        <a class="brand" href="{{ url_for('login') }}">Exam Desk</a>
+        {% endif %}
+    </header>
+
+    <main class="page {% if not current_user %}page-narrow{% endif %}">
+        {% for category, message in get_flashed_messages(with_categories=true) %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

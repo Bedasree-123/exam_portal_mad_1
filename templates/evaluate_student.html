@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Evaluate{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <h1>Evaluate {{ booking.student_name }}</h1>
+        <p class="sub">{{ booking.exam_name }}, {{ booking.exam_date }} at {{ booking.start_time }} (max {{ booking.max_marks }} marks)</p>
+    </div>
+    <a class="btn btn-outline-secondary" href="{{ url_for('examiner_slot_detail', slot_id=booking.slot_id) }}">Back</a>
+</div>
+
+<div class="card-box">
+    <form method="post">
+        {% if rubrics %}
+        <table class="table">
+            <thead>
+                <tr><th>Criterion</th><th>Max</th><th style="width: 120px">Marks</th></tr>
+            </thead>
+            <tbody>
+                {% for rubric in rubrics %}
+                <tr>
+                    <td>
+                        <label for="rubric_{{ rubric.id }}">{{ rubric.criterion_name }}</label>
+                        {% if rubric.description %}<div class="sub">{{ rubric.description }}</div>{% endif %}
+                    </td>
+                    <td>{{ rubric.max_marks }}</td>
+                    <td>
+                        <input class="form-control form-control-sm" id="rubric_{{ rubric.id }}" name="rubric_{{ rubric.id }}"
+                               type="number" min="0" max="{{ rubric.max_marks }}" value="{{ saved_scores.get(rubric.id, 0) }}" required>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="sub">Total is the sum of all criteria and cannot be more than {{ booking.max_marks }}.</p>
+        {% else %}
+        <div class="mb-3">
+            <label class="form-label" for="marks">Marks</label>
+            <input class="form-control" id="marks" name="marks" type="number" min="0" max="{{ booking.max_marks }}"
+                   value="{{ evaluation.marks if evaluation else 0 }}" required>
+        </div>
+        {% endif %}
+
+        <div class="mb-3">
+            <label class="form-label" for="remarks">Remarks</label>
+            <textarea class="form-control" id="remarks" name="remarks" rows="4">{{ evaluation.remarks if evaluation else '' }}</textarea>
+        </div>
+
+        {% if evaluation and evaluation.published %}
+        <div class="alert alert-info">This result is published. Saving as draft will hide it from the student.</div>
+        {% endif %}
+
+        <button class="btn btn-outline-secondary" type="submit" name="action" value="draft">Save draft</button>
+        <button class="btn btn-primary" type="submit" name="action" value="publish">Publish</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Search{% endblock %}
+{% block content %}
+<h1>Search</h1>
+
+<form method="get" class="search-bar">
+    <input class="form-control" name="q" value="{{ term }}" placeholder="Name, email, course code or ID" aria-label="Search">
+    <button class="btn btn-primary" type="submit">Search</button>
+</form>
+
+{% if term %}
+<div class="card-box">
+    <h2>Users ({{ users|length }})</h2>
+    {% if users %}
+    <table class="table">
+        <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for person in users %}
+            <tr>
+                <td>{{ person.id }}</td>
+                <td>{{ person.name }}</td>
+                <td>{{ person.email }}</td>
+                <td>{{ person.role|title }}</td>
+                <td>{{ person.status|title }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No users found.</p>
+    {% endif %}
+</div>
+
+<div class="card-box">
+    <h2>Examinations ({{ exams|length }})</h2>
+    {% if exams %}
+    <table class="table">
+        <thead><tr><th>ID</th><th>Name</th><th>Course</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for exam in exams %}
+            <tr>
+                <td>{{ exam.id }}</td>
+                <td>{{ exam.name }}</td>
+                <td>{{ exam.course_code }}</td>
+                <td>{{ exam.status }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No examinations found.</p>
+    {% endif %}
+</div>
+
+<div class="card-box">
+    <h2>Bookings ({{ bookings|length }})</h2>
+    {% if bookings %}
+    <table class="table">
+        <thead><tr><th>ID</th><th>Student</th><th>Examination</th><th>Date</th><th>Status</th></tr></thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.student_name }}</td>
+                <td>{{ booking.exam_name }}</td>
+                <td>{{ booking.exam_date }} {{ booking.start_time }}</td>
+                <td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No bookings found.</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

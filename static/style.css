@@ -1,0 +1,264 @@
+/* Custom styles on top of Bootstrap */
+
+:root {
+    --main: #2f6f55;
+    --border: #dee2e6;
+    --muted: #6c757d;
+}
+
+body {
+    background: #f4f6f5;
+    font-size: 15px;
+}
+
+a {
+    color: var(--main);
+}
+
+h1 {
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+/* Header */
+
+.topbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 25px;
+    padding: 12px 30px;
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+}
+
+.brand {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: var(--main);
+    text-decoration: none;
+}
+
+.main-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    flex: 1;
+}
+
+.main-nav a {
+    color: #333;
+    text-decoration: none;
+}
+
+.main-nav a:hover {
+    color: var(--main);
+}
+
+.account {
+    display: flex;
+    gap: 15px;
+    font-size: 14px;
+}
+
+.account-name {
+    color: var(--muted);
+}
+
+/* Page layout */
+
+.page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 30px 20px;
+}
+
+.page-narrow {
+    max-width: 480px;
+    padding-top: 60px;
+}
+
+.page-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.card-box {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.box-header h2 {
+    margin-bottom: 4px;
+}
+
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.profile {
+    max-width: 550px;
+}
+
+/* Dashboard numbers */
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.stat {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 15px 20px;
+}
+
+.stat span {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+.stat strong {
+    font-size: 1.8rem;
+}
+
+/* Tables and small helpers */
+
+.table {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.table th {
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 600;
+}
+
+.sub {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.empty {
+    color: var(--muted);
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    white-space: nowrap;
+}
+
+.actions form {
+    margin: 0;
+}
+
+.link-btn {
+    background: none;
+    border: none;
+    padding: 0;
+}
+
+.inline-form {
+    display: flex;
+    gap: 6px;
+}
+
+.inline-form .form-select {
+    min-width: 160px;
+}
+
+.search-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.search-bar .form-control {
+    flex: 2;
+}
+
+.search-bar .form-select {
+    flex: 1;
+}
+
+/* Status colours (the class comes from the status value) */
+
+.badge {
+    font-weight: 500;
+}
+
+.status-booked,
+.status-active,
+.status-available {
+    background: #d1e7dd;
+    color: #0f5132;
+}
+
+.status-pending {
+    background: #fff3cd;
+    color: #664d03;
+}
+
+.status-cancelled,
+.status-inactive {
+    background: #f8d7da;
+    color: #842029;
+}
+
+.status-full {
+    background: #e2e3e5;
+    color: #41464b;
+}
+
+/* Small screens */
+
+@media (max-width: 768px) {
+    .topbar {
+        padding: 12px 15px;
+    }
+
+    .page {
+        padding: 20px 15px;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr;
+    }
+
+    .stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .search-bar {
+        flex-direction: column;
+    }
+}

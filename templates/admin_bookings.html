@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Bookings{% endblock %}
+{% block content %}
+<h1>Bookings</h1>
+
+<div class="card-box">
+    {% if bookings %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr><th>ID</th><th>Student</th><th>Examination</th><th>Slot</th><th>Status</th><th>Reschedule</th></tr>
+            </thead>
+            <tbody>
+                {% for booking in bookings %}
+                <tr>
+                    <td>{{ booking.id }}</td>
+                    <td>{{ booking.student_name }} <div class="sub">{{ booking.student_email }}</div></td>
+                    <td>{{ booking.exam_name }}</td>
+                    <td>
+                        {{ booking.exam_date }}
+                        <div class="sub">{{ booking.start_time }} - {{ booking.end_time }}, {{ booking.examiner_name }}</div>
+                    </td>
+                    <td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+                    <td>
+                        {% if booking.status == 'Booked' %}
+                        <form method="post" class="inline-form">
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                            <select class="form-select form-select-sm" name="slot_id" aria-label="New slot">
+                                {% for slot in slots_by_exam[booking.examination_id] %}
+                                {% set is_current = slot.id == booking.slot_id %}
+                                {% set full = slot.booked >= slot.capacity and not is_current %}
+                                <option value="{{ slot.id }}" {% if is_current %}selected{% endif %} {% if full %}disabled{% endif %}>
+                                    {{ slot.exam_date }} {{ slot.start_time }} ({{ slot.examiner_name }}){% if full %} - full{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                            <button class="btn btn-sm btn-outline-primary" type="submit">Move</button>
+                        </form>
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty">No bookings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

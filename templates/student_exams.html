@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Examinations{% endblock %}
+{% block content %}
+<h1>Examinations</h1>
+
+<form method="get" class="search-bar">
+    <input class="form-control" name="q" value="{{ term }}" placeholder="Exam name, course or type" aria-label="Search">
+    <select class="form-select" name="course_id" aria-label="Course">
+        <option value="">All courses</option>
+        {% for course in courses %}
+        <option value="{{ course.id }}" {% if course_id == course.id|string %}selected{% endif %}>{{ course.course_code }}</option>
+        {% endfor %}
+    </select>
+    <select class="form-select" name="exam_type" aria-label="Type">
+        <option value="">All types</option>
+        {% for kind in exam_types %}
+        <option {% if exam_type == kind %}selected{% endif %}>{{ kind }}</option>
+        {% endfor %}
+    </select>
+    <button class="btn btn-primary" type="submit">Filter</button>
+</form>
+
+{% for exam in exams %}
+<div class="card-box">
+    <div class="box-header">
+        <div>
+            <h2>{{ exam.name }}</h2>
+            <div class="sub">
+                {{ exam.course_code }} - {{ exam.course_name }} | {{ exam.exam_type }} |
+                {{ exam.duration_minutes }} min | {{ exam.max_marks }} marks
+            </div>
+        </div>
+        <span class="sub">Booking: {{ exam.booking_start }} to {{ exam.booking_end }}</span>
+    </div>
+
+    {% set slots = slots_by_exam[exam.id] %}
+    {% if slots %}
+    <table class="table">
+        <thead>
+            <tr><th>Date</th><th>Time</th><th>Examiner</th><th>Seats left</th><th></th></tr>
+        </thead>
+        <tbody>
+            {% for slot in slots %}
+            {% set seats_left = slot.capacity - slot.booked %}
+            <tr>
+                <td>{{ slot.exam_date }}</td>
+                <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+                <td>{{ slot.examiner_name }}</td>
+                <td>{{ seats_left }}</td>
+                <td>
+                    {% if slot.exam_date < today or seats_left < 1 %}
+                        <span class="sub">Unavailable</span>
+                    {% elif today < exam.booking_start %}
+                        <span class="sub">Opens {{ exam.booking_start }}</span>
+                    {% elif today > exam.booking_end %}
+                        <span class="sub">Closed</span>
+                    {% else %}
+                        <form method="post" action="{{ url_for('book_slot', slot_id=slot.id) }}">
+                            <button class="btn btn-sm btn-primary" type="submit">Book</button>
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No slots available yet.</p>
+    {% endif %}
+</div>
+{% else %}
+<div class="card-box">
+    <p class="empty">
+        {% if term or course_id or exam_type %}
+            No examinations match these filters. <a href="{{ url_for('student_exams') }}">Clear filters</a>
+        {% else %}
+            No examinations are open for booking right now.
+        {% endif %}
+    </p>
+</div>
+{% endfor %}
+{% endblock %}

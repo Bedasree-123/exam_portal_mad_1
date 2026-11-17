@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}My Slots{% endblock %}
+{% block content %}
+<h1>My slots</h1>
+
+<div class="card-box">
+    <h2>{{ 'Edit slot' if edit_slot else 'Create slot' }}</h2>
+    {% if exams %}
+    <form method="post">
+        <input type="hidden" name="slot_id" value="{{ edit_slot.id if edit_slot else '' }}">
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label class="form-label" for="examination_id">Examination</label>
+                {% if edit_slot %}
+                <input class="form-control" id="examination_id" value="{{ edit_slot.exam_name }}" disabled>
+                <input type="hidden" name="examination_id" value="{{ edit_slot.examination_id }}">
+                {% else %}
+                <select class="form-select" id="examination_id" name="examination_id" required>
+                    <option value="">Select</option>
+                    {% for exam in exams %}
+                    <option value="{{ exam.id }}" {% if exam.status != 'Slot Creation' %}disabled{% endif %}>
+                        {{ exam.course_code }} - {{ exam.name }}{% if exam.status != 'Slot Creation' %} ({{ exam.status }}){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
+                {% endif %}
+            </div>
+            <div class="col-md-3 mb-3">
+                <label class="form-label" for="exam_date">Date</label>
+                <input class="form-control" id="exam_date" name="exam_date" type="date" min="{{ today }}"
+                       value="{{ edit_slot.exam_date if edit_slot else '' }}" required>
+            </div>
+            <div class="col-6 col-md-2 mb-3">
+                <label class="form-label" for="start_time">Start</label>
+                <input class="form-control" id="start_time" name="start_time" type="time"
+                       value="{{ edit_slot.start_time if edit_slot else '' }}" required>
+            </div>
+            <div class="col-6 col-md-2 mb-3">
+                <label class="form-label" for="end_time">End</label>
+                <input class="form-control" id="end_time" name="end_time" type="time"
+                       value="{{ edit_slot.end_time if edit_slot else '' }}" required>
+            </div>
+            <div class="col-md-1 mb-3">
+                <label class="form-label" for="capacity">Seats</label>
+                <input class="form-control" id="capacity" name="capacity" type="number" min="1"
+                       value="{{ edit_slot.capacity if edit_slot else 1 }}" required>
+            </div>
+        </div>
+        <button class="btn btn-primary" type="submit">{{ 'Save' if edit_slot else 'Create slot' }}</button>
+        {% if edit_slot %}
+            <a class="btn btn-link" href="{{ url_for('examiner_slots') }}">Cancel</a>
+        {% endif %}
+    </form>
+    {% else %}
+    <p class="empty">You need to be assigned to an examination before you can create slots.</p>
+    {% endif %}
+</div>
+
+<div class="card-box">
+    <h2>Created slots</h2>
+    {% if slots %}
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr><th>Examination</th><th>Date</th><th>Time</th><th>Booked</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                <tr>
+                    <td>{{ slot.exam_name }}</td>
+                    <td>{{ slot.exam_date }}</td>
+                    <td>{{ slot.start_time }} - {{ slot.end_time }}</td>
+                    <td>{{ slot.booked }} / {{ slot.capacity }}</td>
+                    <td><span class="badge status-{{ slot.status|lower }}">{{ slot.status }}</span></td>
+                    <td class="actions">
+                        <a href="{{ url_for('examiner_slot_detail', slot_id=slot.id) }}">Students</a>
+                        {% if slot.booked == 0 and slot.exam_status not in ['Booking Open', 'Completed'] %}
+                        <a href="{{ url_for('examiner_slots', edit=slot.id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('delete_examiner_slot', slot_id=slot.id) }}">
+                            <button class="link-btn text-danger" type="submit">Delete</button>
+                        </form>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="empty">No slots yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard{% endblock %}
+{% block content %}
+<h1>Admin Dashboard</h1>
+
+{% if pending_count %}
+<div class="alert alert-warning">
+    {{ pending_count }} examiner {{ 'account is' if pending_count == 1 else 'accounts are' }} waiting for approval.
+    <a href="{{ url_for('admin_examiners') }}">Review</a>
+</div>
+{% endif %}
+
+<div class="stats">
+    <div class="stat"><span>Courses</span><strong>{{ totals.courses }}</strong></div>
+    <div class="stat"><span>Examinations</span><strong>{{ totals.exams }}</strong></div>
+    <div class="stat"><span>Examiners</span><strong>{{ totals.examiners }}</strong></div>
+    <div class="stat"><span>Students</span><strong>{{ totals.students }}</strong></div>
+    <div class="stat"><span>Slots</span><strong>{{ totals.slots }}</strong></div>
+    <div class="stat"><span>Bookings</span><strong>{{ totals.bookings }}</strong></div>
+</div>
+
+<div class="card-box">
+    <div class="box-header">
+        <h2>Recent bookings</h2>
+        <a href="{{ url_for('admin_bookings') }}">View all</a>
+    </div>
+    {% if bookings %}
+    <table class="table">
+        <thead>
+            <tr><th>Student</th><th>Examination</th><th>Date</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.student_name }}</td>
+                <td>{{ booking.exam_name }}</td>
+                <td>{{ booking.exam_date }} {{ booking.start_time }}</td>
+                <td><span class="badge status-{{ booking.status|lower }}">{{ booking.status }}</span></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No bookings yet.</p>
+    {% endif %}
+</div>
+{% endblock %}

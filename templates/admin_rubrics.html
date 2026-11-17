@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Rubric{% endblock %}
+{% block content %}
+<div class="page-title">
+    <h1>Rubric: {{ exam.name }}</h1>
+    <a class="btn btn-outline-secondary" href="{{ url_for('admin_exams') }}">Back to exams</a>
+</div>
+
+<div class="two-col">
+    <div class="card-box">
+        <h2>{{ 'Edit criterion' if edit_rubric else 'Add criterion' }}</h2>
+        <form method="post">
+            <input type="hidden" name="rubric_id" value="{{ edit_rubric.id if edit_rubric else '' }}">
+            <div class="mb-3">
+                <label class="form-label" for="criterion_name">Criterion</label>
+                <input class="form-control" id="criterion_name" name="criterion_name"
+                       value="{{ edit_rubric.criterion_name if edit_rubric else '' }}" required>
+            </div>
+            <div class="row">
+                <div class="col-6 mb-3">
+                    <label class="form-label" for="max_marks">Max marks</label>
+                    <input class="form-control" id="max_marks" name="max_marks" type="number" min="1"
+                           value="{{ edit_rubric.max_marks if edit_rubric else 10 }}" required>
+                </div>
+                <div class="col-6 mb-3">
+                    <label class="form-label" for="weightage">Weightage (%)</label>
+                    <input class="form-control" id="weightage" name="weightage" type="number" min="0"
+                           value="{{ edit_rubric.weightage if edit_rubric else 0 }}">
+                </div>
+            </div>
+            <div class="mb-3">
+                <label class="form-label" for="description">Description (optional)</label>
+                <textarea class="form-control" id="description" name="description" rows="3">{{ edit_rubric.description if edit_rubric else '' }}</textarea>
+            </div>
+            <button class="btn btn-primary" type="submit">{{ 'Save' if edit_rubric else 'Add' }}</button>
+            {% if edit_rubric %}
+                <a class="btn btn-link" href="{{ url_for('admin_rubrics', exam_id=exam.id) }}">Cancel</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <div class="card-box">
+        <h2>Criteria ({{ rubrics|length }})</h2>
+        {% if rubrics %}
+        <table class="table">
+            <thead>
+                <tr><th>Criterion</th><th>Marks</th><th>Weight</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for rubric in rubrics %}
+                <tr>
+                    <td>
+                        {{ rubric.criterion_name }}
+                        {% if rubric.description %}<div class="sub">{{ rubric.description }}</div>{% endif %}
+                    </td>
+                    <td>{{ rubric.max_marks }}</td>
+                    <td>{{ rubric.weightage }}%</td>
+                    <td class="actions">
+                        <a href="{{ url_for('admin_rubrics', exam_id=exam.id, edit=rubric.id) }}">Edit</a>
+                        <form method="post" action="{{ url_for('delete_rubric', rubric_id=rubric.id) }}">
+                            <button class="link-btn text-danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No criteria added yet.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

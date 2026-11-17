@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Students{% endblock %}
+{% block content %}
+<h1>Students</h1>
+
+<form method="get" class="search-bar">
+    <input class="form-control" name="q" value="{{ term }}" placeholder="Name, email or ID" aria-label="Search students">
+    <button class="btn btn-primary" type="submit">Search</button>
+    {% if term %}<a class="btn btn-link" href="{{ url_for('admin_students') }}">Clear</a>{% endif %}
+</form>
+
+<div class="card-box">
+    {% if students %}
+    {% if not term and students|length == 100 %}<p class="sub">Showing the first 100 students.</p>{% endif %}
+    <table class="table">
+        <thead>
+            <tr><th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Phone</th></tr>
+        </thead>
+        <tbody>
+            {% for student in students %}
+            <tr>
+                <td>{{ student.id }}</td>
+                <td>{{ student.name }}</td>
+                <td>{{ student.email }}</td>
+                <td>{{ student.department or '-' }}</td>
+                <td>{{ student.phone or '-' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p class="empty">{{ 'No students match your search.' if term else 'No students have registered yet.' }}</p>
+    {% endif %}
+</div>
+{% endblock %}
